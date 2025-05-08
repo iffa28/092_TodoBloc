@@ -21,6 +21,12 @@ class TodoBloc extends Bloc<TodoEvent, TodoState> {
           Todo(title: event.title, isCompleted: false, date: event.date),
         );
 
+        emit(   // kirim state baru dengan todo yang sudah di update
+          TodoLoaded(
+            todos: updatedTodos,      // memastikan list nya terbaru
+            selectedDate: currentState.selectedDate,
+          ),
+        );
       }
     });
   }
