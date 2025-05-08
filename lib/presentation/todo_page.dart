@@ -102,7 +102,75 @@ class TodoPage extends StatelessWidget {
                   ],
                 ),
               ),
-              
+              SizedBox(height: 16.0),
+              Expanded(
+                child: BlocBuilder<TodoBloc, TodoState>(
+                  builder: (context, state) {
+                    if (state is TodoLoading) {         //loading ketika bloc set state sebelum load data
+                      return Center(child: CircularProgressIndicator());
+                    } else if (state is TodoLoaded) {
+                      if (state.todos.isEmpty) {
+                        return Center(child: Text('Todo list is empty'));
+                      }
+                      return ListView.builder(
+                        itemCount: state.todos.length,     //jumlah todo
+                        itemBuilder: (context, index) {
+                          final todo = state.todos[index];   // ambil todo per item
+                          return Container(
+                            margin: EdgeInsets.only(bottom: 8),
+                            padding: EdgeInsets.all(16.0),
+                            decoration: BoxDecoration(
+                              color: Colors.blue[50],
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      todo.title,
+                                      style: TextStyle(
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                    SizedBox(height: 4),
+                                    Text(
+                                      todo.isCompleted
+                                          ? 'Completed'
+                                          : 'Not Completed',
+                                      style: TextStyle(
+                                        color:
+                                            todo.isCompleted
+                                                ? Colors.green
+                                                : Colors.red,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                Checkbox(
+                                  value: todo.isCompleted,
+                                  onChanged:todo.isCompleted
+                                  ? null       //jika sudah complete, checkbox jadi disable
+                                  : (value) {
+                                    context.read<TodoBloc>().add(
+                                      TodoEventComplete(index: index),    // mengirim event ke bloc
+                                    );
+                                  },
+                                ),
+                              ],
+                            ),
+                          );
+                        },
+                      );
+                    } else {
+                      return Center(child: Text('No todos available'));
+                    }
+                  },
+                ),
+              ),
             ],
           ),
         ),
