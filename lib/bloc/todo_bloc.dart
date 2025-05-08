@@ -21,13 +21,26 @@ class TodoBloc extends Bloc<TodoEvent, TodoState> {
           Todo(title: event.title, isCompleted: false, date: event.date),
         );
 
-        emit(   // kirim state baru dengan todo yang sudah di update
+        emit(
+          // kirim state baru dengan todo yang sudah di update
           TodoLoaded(
-            todos: updatedTodos,      // memastikan list nya terbaru
+            todos: updatedTodos, // memastikan list nya terbaru
             selectedDate: currentState.selectedDate,
           ),
         );
       }
     });
+
+    //memanggil event untuk select date
+    on<TodoSelectDate>((event, emit) {
+      final currentState = state;
+      if (currentState is TodoLoaded) {
+
+        //kirim state baru dengan tanggal yang baru di pilih, tapi list todos tetap
+        emit(TodoLoaded(todos: currentState.todos, selectedDate: event.date));
+      }
+    });
+
+    
   }
 }
